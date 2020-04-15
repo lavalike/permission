@@ -64,7 +64,7 @@ public final class PermissionManager {
             fragment = new PermissionFragment();
             manager.beginTransaction().add(fragment, FRAGMENT_TAG).commitAllowingStateLoss();
         }
-        fragment.exeRequestPermissions(permissions, callback, obtainRequestCode());
+        ((PermissionOperate) fragment).exeRequestPermissions(permissions, callback, obtainRequestCode());
     }
 
     /**

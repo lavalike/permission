@@ -39,6 +39,7 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
                 @Override
                 public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
                     if (event == Lifecycle.Event.ON_CREATE) {
+                        getLifecycle().removeObserver(this);
                         requestPermissions(permissions, requestCode);
                     }
                 }
