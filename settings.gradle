@@ -1,0 +1,3 @@
+rootProject.name='dimeno-permission'
+include ':app'
+include ':library'
