@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.dimeno.permission.PermissionManager;
-import com.dimeno.permission.callback.PermissionCallback;
+import com.dimeno.permission.callback.AbsPermissionCallback;
 
 /**
  * SampleFragment
@@ -30,7 +30,7 @@ public class SampleFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        PermissionManager.request(this, new PermissionCallback() {
+        PermissionManager.request(this, new AbsPermissionCallback() {
             @Override
             public void onGrant(String[] permissions) {
                 for (String permission : permissions) {
@@ -49,6 +49,19 @@ public class SampleFragment extends Fragment implements View.OnClickListener {
                 }
                 Toast.makeText(getContext(), "电话权限部分或全部被拒绝", Toast.LENGTH_SHORT).show();
             }
-        }, Manifest.permission.CALL_PHONE);
+
+            @Override
+            public void onNotDeclared(String[] permissions) {
+                StringBuilder builder = new StringBuilder();
+                for (String permission : permissions) {
+                    if (builder.length() > 0) {
+                        builder.append("、");
+                    }
+                    builder.append(permission);
+                    Log.e("TAG", "onNotDeclared permissions -> " + permission);
+                }
+                Toast.makeText(getContext(), builder.toString() + "未在清单文件声明", Toast.LENGTH_SHORT).show();
+            }
+        }, Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE);
     }
 }

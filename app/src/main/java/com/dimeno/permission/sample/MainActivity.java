@@ -9,7 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dimeno.permission.PermissionManager;
-import com.dimeno.permission.callback.PermissionCallback;
+import com.dimeno.permission.callback.AbsPermissionCallback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestSMS() {
-        PermissionManager.request(this, new PermissionCallback() {
+        PermissionManager.request(this, new AbsPermissionCallback() {
             @Override
             public void onGrant(String[] permissions) {
                 for (String permission : permissions) {
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestStorage() {
-        PermissionManager.request(this, new PermissionCallback() {
+        PermissionManager.request(this, new AbsPermissionCallback() {
             @Override
             public void onGrant(String[] permissions) {
                 for (String permission : permissions) {

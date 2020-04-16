@@ -1,5 +1,7 @@
 package com.dimeno.permission.fragment;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.SparseArray;
 
@@ -13,7 +15,10 @@ import com.dimeno.permission.callback.PermissionCallback;
 import com.dimeno.permission.callback.PermissionOperate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * internal permission fragment
@@ -24,6 +29,9 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
     private static List<String> mGrantedPermissions = new ArrayList<>();
     private static List<String> mDeniedPermissions = new ArrayList<>();
     private static List<String> mNeverAskPermissions = new ArrayList<>();
+    private static List<String> mNotDeclaredPermissions = new ArrayList<>();
+
+    private Set<String> mManifestPermissions;
     private PermissionCallback mCallback;
 
     @Override
@@ -31,6 +39,7 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
         mGrantedPermissions.clear();
         mDeniedPermissions.clear();
         mNeverAskPermissions.clear();
+        mNotDeclaredPermissions.clear();
         mRequestCaches.put(requestCode, callback);
         if (getHost() != null) {
             requestPermissions(permissions, requestCode);
@@ -58,12 +67,17 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     mGrantedPermissions.add(permission);
                 } else {
-                    if (!shouldShowRequestPermissionRationale(permission)) {
-                        //permission never ask
-                        mNeverAskPermissions.add(permission);
+                    if (containerManifest(permission)) {
+                        if (!shouldShowRequestPermissionRationale(permission)) {
+                            //permission never ask
+                            mNeverAskPermissions.add(permission);
+                        } else {
+                            //permission denied
+                            mDeniedPermissions.add(permission);
+                        }
                     } else {
-                        //permission denied
-                        mDeniedPermissions.add(permission);
+                        //permission not declared
+                        mNotDeclaredPermissions.add(permission);
                     }
                 }
             }
@@ -75,10 +89,55 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
      * dispatch permission callback
      */
     private void dispatch() {
-        if (mDeniedPermissions.isEmpty() && mNeverAskPermissions.isEmpty()) {
+        if (mDeniedPermissions.isEmpty() && mNeverAskPermissions.isEmpty() && mNotDeclaredPermissions.isEmpty()) {
             mCallback.onGrant(mGrantedPermissions.toArray(new String[0]));
         } else {
-            mCallback.onDeny(mDeniedPermissions.toArray(new String[0]), mNeverAskPermissions.toArray(new String[0]));
+            if (!mNotDeclaredPermissions.isEmpty()) {
+                mCallback.onNotDeclared(mNotDeclaredPermissions.toArray(new String[0]));
+            }
+            if (!mDeniedPermissions.isEmpty() || !mNeverAskPermissions.isEmpty()) {
+                mCallback.onDeny(mDeniedPermissions.toArray(new String[0]), mNeverAskPermissions.toArray(new String[0]));
+            }
         }
+    }
+
+    /**
+     * whether permission exists in manifest or not
+     *
+     * @param permission permission
+     * @return result
+     */
+    private boolean containerManifest(String permission) {
+        if (mManifestPermissions == null) {
+            mManifestPermissions = getManifestPermissions();
+        }
+        return mManifestPermissions.contains(permission);
+    }
+
+    /**
+     * get all permissions in manifest
+     *
+     * @return permissions set
+     */
+    private Set<String> getManifestPermissions() {
+        Set<String> manifestPermissions = null;
+        PackageInfo packageInfo = null;
+        Context context = getContext();
+        try {
+            if (context != null) {
+                context = context.getApplicationContext();
+                packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (packageInfo != null) {
+            String[] permissions = packageInfo.requestedPermissions;
+            if (permissions != null && permissions.length != 0) {
+                manifestPermissions = new HashSet<>(Arrays.asList(permissions));
+            }
+        }
+
+        return manifestPermissions != null ? manifestPermissions : new HashSet<String>(0);
     }
 }
