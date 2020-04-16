@@ -15,6 +15,32 @@ PermissionManager.request(Context context, PermissionCallback callback, String..
 PermissionManager.request(FragmentActivity activity, PermissionCallback callback, String... permissions)
 ``` 
 
+#### 接口说明
+```java
+public interface PermissionCallback {
+    /**
+     * all permissions are granted
+     *
+     * @param permissions permissions
+     */
+    void onGrant(String[] permissions);
+
+    /**
+     * permissions are denied or refused
+     *
+     * @param deniedPermissions   denied permissions
+     * @param neverAskPermissions refused permissions
+     */
+    void onDeny(String[] deniedPermissions, String[] neverAskPermissions);
+
+    /**
+     * permissions not declared in manifest
+     *
+     * @param permissions permissions
+     */
+    void onNotDeclared(String[] permissions);
+}
+```
 
 #### 使用方式
 ```java
@@ -28,5 +54,12 @@ PermissionManager.request(this, new PermissionCallback() {
     public void onDeny(String[] deniedPermissions, String[] neverAskPermissions) {
         
     }
+    
+    @Override
+    public void onNotDeclared(String[] permissions) {
+        
+    }
 }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 ```
+
+为简便开发，建议使用抽象接口实现类**AbsPermissionCallback**
