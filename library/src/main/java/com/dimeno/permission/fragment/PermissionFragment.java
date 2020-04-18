@@ -67,7 +67,7 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     mGrantedPermissions.add(permission);
                 } else {
-                    if (containerManifest(permission)) {
+                    if (containsManifest(permission)) {
                         if (!shouldShowRequestPermissionRationale(permission)) {
                             //permission never ask
                             mNeverAskPermissions.add(permission);
@@ -107,7 +107,7 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
      * @param permission permission
      * @return result
      */
-    private boolean containerManifest(String permission) {
+    private boolean containsManifest(String permission) {
         if (mManifestPermissions == null) {
             mManifestPermissions = getManifestPermissions();
         }
