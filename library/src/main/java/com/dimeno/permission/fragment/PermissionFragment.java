@@ -94,8 +94,7 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
         } else {
             if (!mNotDeclaredPermissions.isEmpty()) {
                 mCallback.onNotDeclared(mNotDeclaredPermissions.toArray(new String[0]));
-            }
-            if (!mDeniedPermissions.isEmpty() || !mNeverAskPermissions.isEmpty()) {
+            } else {
                 mCallback.onDeny(mDeniedPermissions.toArray(new String[0]), mNeverAskPermissions.toArray(new String[0]));
             }
         }
