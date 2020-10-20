@@ -4,26 +4,31 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-00CC00.svg?style=flat)](https://www.android.com)
 [![](https://jitpack.io/v/dimeno-tech/dimeno-permission.svg)](https://jitpack.io/#dimeno-tech/dimeno-permission)
 
-#### 支持方法
-方法一
+### 依赖导入
 
-```java
-PermissionManager.request(Fragment fragment, PermissionCallback callback, String... permissions)
+项目根目录
+
+``` gradle
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
 ```
 
-方法二
+模块目录
 
-```java
-PermissionManager.request(Context context, PermissionCallback callback, String... permissions)
+``` gradle
+dependencies {
+	implementation 'com.github.dimeno-tech:dimeno-permission:0.0.2'
+}
 ```
 
-方法三
+### 接口说明
 
-```java
-PermissionManager.request(FragmentActivity activity, PermissionCallback callback, String... permissions)
-``` 
+为简便接口，可使用抽象接口实现类 **AbsPermissionCallback**
 
-#### 接口说明
 ```java
 public interface PermissionCallback {
     /**
@@ -50,24 +55,32 @@ public interface PermissionCallback {
 }
 ```
 
-#### 使用方式
+### 代码示例
+
+```java
+public final class PermissionManager {
+    public static void request(Fragment fragment, PermissionCallback callback, String... permissions);
+    public static void request(Context context, PermissionCallback callback, String... permissions);
+    public static void request(FragmentActivity activity, PermissionCallback callback, String... permissions);
+    public static Intent getSettingIntent(Context context);
+}
+```
+
 ```java
 PermissionManager.request(this, new PermissionCallback() {
     @Override
     public void onGrant(String[] permissions) {
-        
+
     }
 
     @Override
     public void onDeny(String[] deniedPermissions, String[] neverAskPermissions) {
-        
+
     }
-    
+
     @Override
     public void onNotDeclared(String[] permissions) {
-        
+
     }
 }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 ```
-
-为简便开发，建议使用抽象接口实现类**AbsPermissionCallback**
