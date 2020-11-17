@@ -1,4 +1,4 @@
-package com.dimeno.permission.common;
+package com.wangzhen.permission.common;
 
 /**
  * Common

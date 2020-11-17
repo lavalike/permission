@@ -1,4 +1,4 @@
-package com.dimeno.permission.sample;
+package com.wangzhen.permission.sample;
 
 import android.Manifest;
 import android.os.Bundle;
@@ -8,8 +8,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.dimeno.permission.PermissionManager;
-import com.dimeno.permission.callback.AbsPermissionCallback;
+import com.wangzhen.permission.PermissionManager;
+import com.wangzhen.permission.callback.AbsPermissionCallback;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.dimeno.permission.callback;
+package com.wangzhen.permission.callback;
 
 /**
  * abstract implementation of {@link PermissionCallback}

@@ -1,4 +1,4 @@
-package com.dimeno.permission;
+package com.wangzhen.permission;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +10,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.dimeno.permission.callback.PermissionCallback;
-import com.dimeno.permission.callback.PermissionOperate;
-import com.dimeno.permission.fragment.PermissionFragment;
-import com.dimeno.permission.util.Utils;
+import com.wangzhen.permission.callback.PermissionCallback;
+import com.wangzhen.permission.callback.PermissionOperate;
+import com.wangzhen.permission.fragment.PermissionFragment;
+import com.wangzhen.permission.util.Utils;
 
-import static com.dimeno.permission.common.Common.FRAGMENT_TAG;
+import static com.wangzhen.permission.common.Common.FRAGMENT_TAG;
 
 /**
  * PermissionManager

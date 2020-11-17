@@ -1,4 +1,4 @@
-package com.dimeno.permission.util;
+package com.wangzhen.permission.util;
 
 import android.content.Context;
 import android.content.ContextWrapper;

@@ -1,4 +1,4 @@
-package com.dimeno.permission.sample;
+package com.wangzhen.permission.sample;
 
 import android.Manifest;
 import android.os.Bundle;
@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.dimeno.permission.PermissionManager;
-import com.dimeno.permission.callback.AbsPermissionCallback;
+import com.wangzhen.permission.PermissionManager;
+import com.wangzhen.permission.callback.AbsPermissionCallback;
 
 /**
  * SampleFragment

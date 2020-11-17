@@ -1,4 +1,4 @@
-package com.dimeno.permission.callback;
+package com.wangzhen.permission.callback;
 
 /**
  * PermissionOperate

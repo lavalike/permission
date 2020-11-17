@@ -1,4 +1,4 @@
-package com.dimeno.permission.fragment;
+package com.wangzhen.permission.fragment;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -11,8 +11,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.dimeno.permission.callback.PermissionCallback;
-import com.dimeno.permission.callback.PermissionOperate;
+import com.wangzhen.permission.callback.PermissionCallback;
+import com.wangzhen.permission.callback.PermissionOperate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
