@@ -1,12 +1,9 @@
-package com.wangzhen.permission.callback;
+package com.wangzhen.permission.callback
 
 /**
- * abstract implementation of {@link PermissionCallback}
+ * abstract implementation of [PermissionCallback]
  * Created by wangzhen on 2020/4/16.
  */
-public abstract class AbsPermissionCallback implements PermissionCallback {
-    @Override
-    public void onNotDeclared(String[] permissions) {
-
-    }
+abstract class AbsPermissionCallback : PermissionCallback {
+    override fun onNotDeclared(permissions: Array<String>) {}
 }

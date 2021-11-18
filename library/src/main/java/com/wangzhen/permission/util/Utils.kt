@@ -1,28 +1,29 @@
-package com.wangzhen.permission.util;
+package com.wangzhen.permission.util
 
-import android.content.Context;
-import android.content.ContextWrapper;
-
-import androidx.fragment.app.FragmentActivity;
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.fragment.app.FragmentActivity
 
 /**
  * Utils
  * Created by wangzhen on 2020/4/15.
  */
-public class Utils {
+object Utils {
     /**
      * find fragment activity by context
      *
      * @param context context
      * @return fragment activity
      */
-    public static FragmentActivity getFragmentActivity(Context context) {
-        while (context instanceof ContextWrapper) {
-            if (context instanceof FragmentActivity) {
-                return (FragmentActivity) context;
+    @JvmStatic
+    fun getFragmentActivity(context: Context): FragmentActivity? {
+        var ctx = context
+        while (ctx is ContextWrapper) {
+            if (ctx is FragmentActivity) {
+                return ctx
             }
-            context = ((ContextWrapper) context).getBaseContext();
+            ctx = ctx.baseContext
         }
-        return null;
+        return null
     }
 }

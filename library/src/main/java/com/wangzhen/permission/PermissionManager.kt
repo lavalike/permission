@@ -1,49 +1,66 @@
-package com.wangzhen.permission;
+package com.wangzhen.permission
 
-import static com.wangzhen.permission.common.Common.FRAGMENT_TAG;
-
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-
-import com.wangzhen.permission.callback.PermissionCallback;
-import com.wangzhen.permission.callback.PermissionOperate;
-import com.wangzhen.permission.fragment.PermissionFragment;
-import com.wangzhen.permission.util.Utils;
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import com.wangzhen.permission.callback.PermissionCallback
+import com.wangzhen.permission.callback.PermissionOperate
+import com.wangzhen.permission.common.Common.FRAGMENT_TAG
+import com.wangzhen.permission.fragment.PermissionFragment
+import com.wangzhen.permission.util.Utils.getFragmentActivity
 
 /**
  * PermissionManager
  * Created by wangzhen on 2020/4/15.
  */
-public final class PermissionManager {
-    private static final PermissionManager sInstance;
+object PermissionManager {
 
-    static {
-        sInstance = new PermissionManager();
+    @JvmStatic
+    fun request(
+        fragment: Fragment?,
+        callback: PermissionCallback?,
+        vararg permissions: String
+    ) {
+        request(fragment?.activity, callback, *permissions)
     }
 
-    public static void request(Fragment fragment, PermissionCallback callback, String... permissions) {
-        request(fragment.getActivity(), callback, permissions);
-    }
-
-    public static void request(Context context, PermissionCallback callback, String... permissions) {
-        request(Utils.getFragmentActivity(context), callback, permissions);
-    }
-
-    public static void request(FragmentActivity activity, PermissionCallback callback, String... permissions) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            sInstance.requestPermission(activity, callback, permissions);
-        } else {
-            if (callback != null) {
-                callback.onGrant(permissions);
-            }
+    @JvmStatic
+    fun request(context: Context?, callback: PermissionCallback?, vararg permissions: String) {
+        context?.let { ctx ->
+            request(
+                getFragmentActivity(ctx) as FragmentActivity, callback, *permissions
+            )
         }
+    }
+
+    @JvmStatic
+    fun request(
+        activity: FragmentActivity,
+        callback: PermissionCallback?,
+        vararg permissions: String
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermission(activity, callback, *permissions)
+        } else {
+            callback?.onGrant(arrayOf(*permissions))
+        }
+    }
+
+    /**
+     * get intent to application details setting page
+     *
+     * @param context context
+     * @return intent
+     */
+    @JvmStatic
+    fun getSettingIntent(context: Context): Intent {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        intent.data = Uri.parse("package:" + context.packageName)
+        return intent
     }
 
     /**
@@ -53,28 +70,20 @@ public final class PermissionManager {
      * @param callback    callback
      * @param permissions permissions
      */
-    private void requestPermission(FragmentActivity activity, PermissionCallback callback, String... permissions) {
-        FragmentManager manager = activity.getSupportFragmentManager();
-        Fragment tag = manager.findFragmentByTag(FRAGMENT_TAG);
-        PermissionFragment fragment;
-        if (tag instanceof PermissionOperate) {
-            fragment = (PermissionFragment) tag;
+    private fun requestPermission(
+        activity: FragmentActivity,
+        callback: PermissionCallback?,
+        vararg permissions: String
+    ) {
+        val manager = activity.supportFragmentManager
+        val tag = manager.findFragmentByTag(FRAGMENT_TAG)
+        val fragment: PermissionFragment
+        if (tag is PermissionOperate) {
+            fragment = tag as PermissionFragment
         } else {
-            fragment = new PermissionFragment();
-            manager.beginTransaction().add(fragment, FRAGMENT_TAG).commitAllowingStateLoss();
+            fragment = PermissionFragment()
+            manager.beginTransaction().add(fragment, FRAGMENT_TAG).commitAllowingStateLoss()
         }
-        ((PermissionOperate) fragment).exeRequestPermissions(permissions, callback);
-    }
-
-    /**
-     * get intent to application details setting page
-     *
-     * @param context context
-     * @return intent
-     */
-    public static Intent getSettingIntent(Context context) {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        intent.setData(Uri.parse("package:" + context.getPackageName()));
-        return intent;
+        (fragment as PermissionOperate).exeRequestPermissions(arrayOf(*permissions), callback)
     }
 }

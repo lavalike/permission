@@ -1,67 +1,67 @@
-package com.wangzhen.permission.sample;
+package com.wangzhen.permission.sample
 
-import android.Manifest;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import com.wangzhen.permission.PermissionManager;
-import com.wangzhen.permission.callback.AbsPermissionCallback;
+import android.Manifest
+import com.wangzhen.permission.PermissionManager.request
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import com.wangzhen.permission.sample.R
+import com.wangzhen.permission.PermissionManager
+import com.wangzhen.permission.callback.AbsPermissionCallback
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import java.lang.StringBuilder
 
 /**
  * SampleFragment
  * Created by wangzhen on 2020/4/15.
  */
-public class SampleFragment extends Fragment implements View.OnClickListener {
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View inflate = inflater.inflate(R.layout.fragment_sample, container, false);
-        inflate.findViewById(R.id.btn_call).setOnClickListener(this);
-        return inflate;
+class SampleFragment : Fragment(), View.OnClickListener {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val inflate = inflater.inflate(R.layout.fragment_sample, container, false)
+        inflate.findViewById<View>(R.id.btn_call).setOnClickListener(this)
+        return inflate
     }
 
-    @Override
-    public void onClick(View v) {
-        PermissionManager.request(this, new AbsPermissionCallback() {
-            @Override
-            public void onGrant(String[] permissions) {
-                for (String permission : permissions) {
-                    Log.e("TAG", "onGrant permissions -> " + permission);
+    override fun onClick(v: View) {
+        request(this, object : AbsPermissionCallback() {
+            override fun onGrant(permissions: Array<String>) {
+                for (permission in permissions) {
+                    Log.e("TAG", "onGrant permissions -> $permission")
                 }
-                Toast.makeText(getContext(), "电话权限已全部授予", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "电话权限已全部授予", Toast.LENGTH_SHORT).show()
             }
 
-            @Override
-            public void onDeny(String[] deniedPermissions, String[] neverAskPermissions) {
-                for (String permission : deniedPermissions) {
-                    Log.e("TAG", "onDeny deniedPermissions -> " + permission);
+            override fun onDeny(
+                deniedPermissions: Array<String>,
+                neverAskPermissions: Array<String>
+            ) {
+                for (permission in deniedPermissions) {
+                    Log.e("TAG", "onDeny deniedPermissions -> $permission")
                 }
-                for (String permission : neverAskPermissions) {
-                    Log.e("TAG", "onDeny neverAskPermissions -> " + permission);
+                for (permission in neverAskPermissions) {
+                    Log.e("TAG", "onDeny neverAskPermissions -> $permission")
                 }
-                Toast.makeText(getContext(), "电话权限部分或全部被拒绝", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "电话权限部分或全部被拒绝", Toast.LENGTH_SHORT).show()
             }
 
-            @Override
-            public void onNotDeclared(String[] permissions) {
-                StringBuilder builder = new StringBuilder();
-                for (String permission : permissions) {
-                    if (builder.length() > 0) {
-                        builder.append("、");
+            override fun onNotDeclared(permissions: Array<String>) {
+                val builder = StringBuilder()
+                for (permission in permissions) {
+                    if (builder.isNotEmpty()) {
+                        builder.append("、")
                     }
-                    builder.append(permission);
-                    Log.e("TAG", "onNotDeclared permissions -> " + permission);
+                    builder.append(permission)
+                    Log.e("TAG", "onNotDeclared permissions -> $permission")
                 }
-                Toast.makeText(getContext(), builder.toString() + "未在清单文件声明", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, builder.toString() + "未在清单文件声明", Toast.LENGTH_SHORT).show()
             }
-        }, Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE);
+        }, Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE)
     }
 }

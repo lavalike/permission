@@ -1,9 +1,9 @@
-package com.wangzhen.permission.callback;
+package com.wangzhen.permission.callback
 
 /**
  * PermissionOperate
  * Created by wangzhen on 2020/4/15.
  */
-public interface PermissionOperate {
-    void exeRequestPermissions(String[] permissions, PermissionCallback callback);
+interface PermissionOperate {
+    fun exeRequestPermissions(permissions: Array<String>, callback: PermissionCallback?)
 }

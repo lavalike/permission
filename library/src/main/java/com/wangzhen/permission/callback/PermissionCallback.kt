@@ -1,16 +1,16 @@
-package com.wangzhen.permission.callback;
+package com.wangzhen.permission.callback
 
 /**
  * PermissionCallback
  * Created by wangzhen on 2020/4/15.
  */
-public interface PermissionCallback {
+interface PermissionCallback {
     /**
      * all permissions are granted
      *
      * @param permissions permissions
      */
-    void onGrant(String[] permissions);
+    fun onGrant(permissions: Array<String>)
 
     /**
      * permissions are denied or refused
@@ -18,12 +18,12 @@ public interface PermissionCallback {
      * @param deniedPermissions   denied permissions
      * @param neverAskPermissions refused permissions
      */
-    void onDeny(String[] deniedPermissions, String[] neverAskPermissions);
+    fun onDeny(deniedPermissions: Array<String>, neverAskPermissions: Array<String>)
 
     /**
      * permissions not declared in manifest
      *
      * @param permissions permissions
      */
-    void onNotDeclared(String[] permissions);
+    fun onNotDeclared(permissions: Array<String>)
 }
