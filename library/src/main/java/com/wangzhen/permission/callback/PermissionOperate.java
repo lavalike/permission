@@ -5,5 +5,5 @@ package com.wangzhen.permission.callback;
  * Created by wangzhen on 2020/4/15.
  */
 public interface PermissionOperate {
-    void exeRequestPermissions(String[] permissions, PermissionCallback callback, int requestCode);
+    void exeRequestPermissions(String[] permissions, PermissionCallback callback);
 }

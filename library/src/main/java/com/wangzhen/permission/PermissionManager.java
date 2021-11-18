@@ -1,5 +1,7 @@
 package com.wangzhen.permission;
 
+import static com.wangzhen.permission.common.Common.FRAGMENT_TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,15 +17,12 @@ import com.wangzhen.permission.callback.PermissionOperate;
 import com.wangzhen.permission.fragment.PermissionFragment;
 import com.wangzhen.permission.util.Utils;
 
-import static com.wangzhen.permission.common.Common.FRAGMENT_TAG;
-
 /**
  * PermissionManager
  * Created by wangzhen on 2020/4/15.
  */
 public final class PermissionManager {
-    private static PermissionManager sInstance;
-    private static int sCode;
+    private static final PermissionManager sInstance;
 
     static {
         sInstance = new PermissionManager();
@@ -64,7 +63,7 @@ public final class PermissionManager {
             fragment = new PermissionFragment();
             manager.beginTransaction().add(fragment, FRAGMENT_TAG).commitAllowingStateLoss();
         }
-        ((PermissionOperate) fragment).exeRequestPermissions(permissions, callback, obtainRequestCode());
+        ((PermissionOperate) fragment).exeRequestPermissions(permissions, callback);
     }
 
     /**
@@ -77,17 +76,5 @@ public final class PermissionManager {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + context.getPackageName()));
         return intent;
-    }
-
-    /**
-     * obtain request code
-     * {@link FragmentActivity#checkForValidRequestCode(int)}
-     *
-     * @return request code
-     */
-    private static int obtainRequestCode() {
-        if ((sCode & 0xffff0000) != 0)
-            sCode = 0;
-        return sCode++;
     }
 }

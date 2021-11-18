@@ -3,8 +3,10 @@ package com.wangzhen.permission.fragment;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.SparseArray;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,46 +28,42 @@ import java.util.Set;
  * Created by wangzhen on 2020/4/15.
  */
 public class PermissionFragment extends Fragment implements PermissionOperate {
-    private static SparseArray<PermissionCallback> mRequestCaches = new SparseArray<>();
-    private static List<String> mGrantedPermissions = new ArrayList<>();
-    private static List<String> mDeniedPermissions = new ArrayList<>();
-    private static List<String> mNeverAskPermissions = new ArrayList<>();
-    private static List<String> mNotDeclaredPermissions = new ArrayList<>();
+    private static final List<String> mGrantedPermissions = new ArrayList<>();
+    private static final List<String> mDeniedPermissions = new ArrayList<>();
+    private static final List<String> mNeverAskPermissions = new ArrayList<>();
+    private static final List<String> mNotDeclaredPermissions = new ArrayList<>();
 
     private Set<String> mManifestPermissions;
     private PermissionCallback mCallback;
 
     @Override
-    public void exeRequestPermissions(final String[] permissions, PermissionCallback callback, final int requestCode) {
+    public void exeRequestPermissions(final String[] permissions, PermissionCallback callback) {
         mGrantedPermissions.clear();
         mDeniedPermissions.clear();
         mNeverAskPermissions.clear();
         mNotDeclaredPermissions.clear();
-        mRequestCaches.put(requestCode, callback);
+        mCallback = callback;
         if (getHost() != null) {
-            requestPermissions(permissions, requestCode);
+            launcher.launch(permissions);
         } else {
             getLifecycle().addObserver(new LifecycleEventObserver() {
                 @Override
                 public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
                     if (event == Lifecycle.Event.ON_CREATE) {
                         getLifecycle().removeObserver(this);
-                        requestPermissions(permissions, requestCode);
+                        launcher.launch(permissions);
                     }
                 }
             });
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        mCallback = mRequestCaches.get(requestCode);
-        if (mCallback != null) {
-            mRequestCaches.remove(requestCode);
-            for (int i = 0; i < permissions.length; i++) {
-                String permission = permissions[i];
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+    private final ActivityResultLauncher<String[]> launcher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+        @Override
+        public void onActivityResult(Map<String, Boolean> result) {
+            for (Map.Entry<String, Boolean> entry : result.entrySet()) {
+                String permission = entry.getKey();
+                if (entry.getValue()) {
                     mGrantedPermissions.add(permission);
                 } else {
                     if (containsManifest(permission)) {
@@ -83,12 +82,14 @@ public class PermissionFragment extends Fragment implements PermissionOperate {
             }
             dispatch();
         }
-    }
+    });
 
     /**
      * dispatch permission callback
      */
     private void dispatch() {
+        if (mCallback == null)
+            return;
         if (mDeniedPermissions.isEmpty() && mNeverAskPermissions.isEmpty() && mNotDeclaredPermissions.isEmpty()) {
             mCallback.onGrant(mGrantedPermissions.toArray(new String[0]));
         } else {
