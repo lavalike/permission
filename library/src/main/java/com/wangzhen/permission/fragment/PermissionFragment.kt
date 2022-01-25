@@ -16,14 +16,14 @@ import java.util.*
  * Created by wangzhen on 2020/4/15.
  */
 internal class PermissionFragment : Fragment(), PermissionOperate {
-    private var mCallback: PermissionCallback? = null
+    private var callback: PermissionCallback? = null
 
     override fun exeRequestPermissions(permissions: Array<String>, callback: PermissionCallback?) {
-        mGrantedPermissions.clear()
-        mDeniedPermissions.clear()
-        mNeverAskPermissions.clear()
-        mNotDeclaredPermissions.clear()
-        mCallback = callback
+        grantedPermissions.clear()
+        deniedPermissions.clear()
+        neverAskPermissions.clear()
+        notDeclaredPermissions.clear()
+        this.callback = callback
         if (host != null) {
             launcher.launch(permissions)
         } else {
@@ -42,19 +42,19 @@ internal class PermissionFragment : Fragment(), PermissionOperate {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
             for ((permission, value) in result) {
                 if (value) {
-                    mGrantedPermissions.add(permission)
+                    grantedPermissions.add(permission)
                 } else {
                     if (containsManifest(permission)) {
                         if (!shouldShowRequestPermissionRationale(permission)) {
                             //permission never ask
-                            mNeverAskPermissions.add(permission)
+                            neverAskPermissions.add(permission)
                         } else {
                             //permission denied
-                            mDeniedPermissions.add(permission)
+                            deniedPermissions.add(permission)
                         }
                     } else {
                         //permission not declared
-                        mNotDeclaredPermissions.add(permission)
+                        notDeclaredPermissions.add(permission)
                     }
                 }
             }
@@ -65,15 +65,15 @@ internal class PermissionFragment : Fragment(), PermissionOperate {
      * dispatch permission callback
      */
     private fun dispatch() {
-        if (mDeniedPermissions.isEmpty() && mNeverAskPermissions.isEmpty() && mNotDeclaredPermissions.isEmpty()) {
-            mCallback?.onGrant(mGrantedPermissions.toTypedArray())
+        if (deniedPermissions.isEmpty() && neverAskPermissions.isEmpty() && notDeclaredPermissions.isEmpty()) {
+            callback?.onGrant(grantedPermissions.toTypedArray())
         } else {
-            if (mNotDeclaredPermissions.isNotEmpty()) {
-                mCallback?.onNotDeclared(mNotDeclaredPermissions.toTypedArray())
+            if (notDeclaredPermissions.isNotEmpty()) {
+                callback?.onNotDeclared(notDeclaredPermissions.toTypedArray())
             } else {
-                mCallback?.onDeny(
-                    mDeniedPermissions.toTypedArray(),
-                    mNeverAskPermissions.toTypedArray()
+                callback?.onDeny(
+                    deniedPermissions.toTypedArray(),
+                    neverAskPermissions.toTypedArray()
                 )
             }
         }
@@ -117,9 +117,9 @@ internal class PermissionFragment : Fragment(), PermissionOperate {
     }
 
     companion object {
-        private val mGrantedPermissions: MutableList<String> = ArrayList()
-        private val mDeniedPermissions: MutableList<String> = ArrayList()
-        private val mNeverAskPermissions: MutableList<String> = ArrayList()
-        private val mNotDeclaredPermissions: MutableList<String> = ArrayList()
+        private val grantedPermissions: MutableList<String> = ArrayList()
+        private val deniedPermissions: MutableList<String> = ArrayList()
+        private val neverAskPermissions: MutableList<String> = ArrayList()
+        private val notDeclaredPermissions: MutableList<String> = ArrayList()
     }
 }
